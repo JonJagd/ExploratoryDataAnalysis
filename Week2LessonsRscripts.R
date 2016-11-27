@@ -23,3 +23,41 @@ qplot(displ, hwy, data = mpg, color = drv)
 
 qplot(logpm25, NocturnalSympt, data = maacs, facets = . ~bmicat, geom = 
         c("point", "smooth"), method = "lm")
+
+
+library(lattice)
+library(datasets)
+data(airquality)
+p <- xyplot(Ozone ~ Wind | factor(Month), data = airquality)
+
+library(datasets)
+data(airquality)
+
+##qplot(Wind, Ozone, data = airquality, geom = "smooth")
+
+##qplot(Wind, Ozone, data = airquality)
+
+qplot(Wind, Ozone, data = airquality, facets = . ~ factor(Month))
+
+airquality = transform(airquality, Month = factor(Month))
+qplot(Wind, Ozone, data = airquality, facets = . ~ Month)
+
+library(ggplot2)
+install.packages("ggplot2movies")
+library(ggplot2movies)
+g <- ggplot(movies, aes(votes, rating))G
+p <- g + geom_point()
+print(p)
+
+
+qplot(votes, rating, data = movies)
+
+qplot(votes, rating, data = movies, panel = panel.loess)
+
+qplot(votes, rating, data = movies) + geom_smooth()
+
+qplot(votes, rating, data = movies) + stats_smooth("loess")
+
+qplot(votes, rating, data = movies, smooth = "loess")
+
+
