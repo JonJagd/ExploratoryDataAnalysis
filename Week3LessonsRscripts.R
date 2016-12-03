@@ -120,6 +120,50 @@ pal(10) # En 10-pkts skala fra rød til gul
 ##[6] "#FF8D00" "#FFAA00" "#FFC600" "#FFE200" "#FFFF00"
 
 
+## Principal Components Analysis and
+## Singular Value Decomposition
+##Matrix data
+set.seed(12345)
+par(mar = rep(0.2, 4))
+dataMatrix <- matrix(rnorm(400), nrow = 40) ## matrix med 400 værdier i 40 rækker, hvilket giver 10 kolonner
+image(1:10, 1:40, t(dataMatrix)[, nrow(dataMatrix):1]) ## Billede/grid med 10 kolonner og 40 rækker og værdier fra den transponerede data matrix, så den tælle rnok oppe fra og ned til 1
+
+##Cluster the data
+par(mar = rep(0.2, 4))
+heatmap(dataMatrix) ## Heatmap giver automatisk et heatmap med et dendrogram
+
+##What if we add a pattern?
+set.seed(678910)
+for (i in 1:40) {
+  # flip a coin
+  coinFlip <- rbinom(1, size = 1, prob = 0.5)
+  # if coin is heads add a common pattern to that row
+  if (coinFlip) {
+    dataMatrix[i, ] <- dataMatrix[i, ] + rep(c(0, 3), each = 5)
+  }
+}
+
+
+##What if we add a pattern? - the data
+par(mar = rep(0.2, 4))
+image(1:10, 1:40, t(dataMatrix)[, nrow(dataMatrix):1])
+##What if we add a pattern? - the clustered data
+par(mar = rep(0.2, 4))
+heatmap(dataMatrix) ## Der er kommet to klart opdelte grupper fra kolonne 1:5 og 5:10 ved coinflippet, hvor der lægges 3 til i kolonne 6:10
+
+##Patterns in rows and columns
+hh <- hclust(dist(dataMatrix))
+dataMatrixOrdered <- dataMatrix[hh$order, ]
+par(mfrow = c(1, 3))
+par(mar = c(4,1,1,1))
+image(t(dataMatrixOrdered)[, nrow(dataMatrixOrdered):1])
+plot(rowMeans(dataMatrixOrdered), 40:1, xlab = "Row Mean", ylab = "Row", pch = 19)
+plot(colMeans(dataMatrixOrdered), xlab = "Column", ylab = "Column Mean", pch = 19)
+
+
+
+
+
 ##install.packages("RColorBrewer")
 library(RColorBrewer)
 cols <- brewer.pal(3, "BuGn")
