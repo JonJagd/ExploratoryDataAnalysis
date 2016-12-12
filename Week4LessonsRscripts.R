@@ -1,3 +1,4 @@
+## This whole file is a reproduction of Roger Pengs 40 minutes video instructing how to conduct an exploratory analysis on PM2.5 values
 setwd("C:/Git/R/Data/ExploratoryDataAnalysis")
 
 ## Read the data file
@@ -13,7 +14,7 @@ cnames <- readLines("RD_501_88101_1999-0.txt", 1)
 cnames <- strsplit(cnames, "|", fixed = TRUE)
 ## We only want the first element of the list as the header
 names(pm0) <- cnames[[1]]
-## The headers now contains spaces and tehrefore are not valid headers
+## The headers now contains spaces and therefore are not valid headers
 ## Therefore we use make.names() to create valid headers
 names(pm0) <- make.names(cnames[[1]])
 
@@ -124,7 +125,28 @@ plot(dates0, x0sub, pch = 20, ylim = rng)
 abline(h = median(x0sub, na.rm = T)) ## adding a median trendline to the PM2.5 values
 plot(dates1, x1sub, pch = 20, ylim = rng)
 abline(h = median(x1sub, na.rm = T)) ## adding a median trendline to the PM2.5 values
-## We can see a big spread in the 1999 values, so we have lower evels and less spikes in 2012
+## We can see a big spread in the 1999 values, so we have generally lower levels and less spikes in 2012
 
+## Exploring levels at State level
+## So we want to take the average level by state
+mn0 <- with(pm0, tapply(Sample.Value, State.Code, mean, na.rm = T))
+str(mn0)
+summary(mn0)
+mn1 <- with(pm1, tapply(Sample.Value, State.Code, mean, na.rm = T))
+summary(mn1)
 
-
+## Now we want to create a dataframe that contains these values for every state
+d0 <- data.frame(State = names(mn0), mean = mn0)
+d1 <- data.frame(State = names(mn1), mean = mn1)
+## Then we merge these data frames
+mrg <- merge(d0, d1, by = "State")
+dim(mrg)
+head(mrg)
+## Now we want to plot these data
+par(mfrow = c(1, 1))
+## We create a plot with the 52 values for the 1999 data frame
+with(mrg, plot(rep(1999, 52), mrg[, 2], xlim = c(1998, 2013))) ## Looks like the with()-function is not actually needed
+## For the second series we just add points
+with(mrg, points(rep(2012, 52), mrg[, 3]))
+## Now we want to connect the dots, and we can use the segments function for that
+segments(rep(1999, 52), mrg[,2], rep(2012, 52), mrg[,3])
